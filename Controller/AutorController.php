@@ -10,8 +10,7 @@ namespace App\Controller;
  * Definimos aqui que nossa classe precisa incluir uma classe de outro subnamespace
  * do projeto, no caso a classe Aluno do sub-namespace Model
  */
-
-use App\Model\{ Categoria, Livro, Autor };
+use App\Model\Autor;
 use Exception;
 
 /**
@@ -25,23 +24,23 @@ use Exception;
  * pode fazer o extends dela, por exemplo: class Teste extends AlunoController.
  * Veja mais sobre final aqui: https://www.php.net/manual/pt_BR/language.oop5.final.php
  */
-final class LivroController extends Controller
+final class AutorController extends Controller
 {
     public static function index() : void
     {
         parent::isProtected(); 
 
-        $model = new Livro();
+        $model = new Autor();
         
         try {
             $model->getAllRows();
 
         } catch(Exception $e) {
-            $model->setError("Ocorreu um erro ao buscar os livros:");
+            $model->setError("Ocorreu um erro ao buscar os autores:");
             $model->setError($e->getMessage());
         }
 
-        parent::render('Livro/lista_livro.php', $model); 
+        parent::render('Autor/lista_autor.php', $model); 
     } 
 
     /**
@@ -54,22 +53,19 @@ final class LivroController extends Controller
     {
         parent::isProtected(); 
 
-        $model = new Livro();
+        $model = new Autor();
         
         try
         {
             if(parent::isPost())
             {
                 $model->Id = !empty($_POST['id']) ? $_POST['id'] : null;
-                $model->Titulo = $_POST['titulo'];
-                $model->Id_Categoria = $_POST['id_categoria'];
-                $model->Isbn = $_POST['isbn'];
-                $model->Ano = $_POST['ano'];
-                $model->Editora = $_POST['editora'];
-                $model->Id_Autores = $_POST['autor'];
+                $model->Nome = $_POST['nome'];
+                $model->Data_Nascimento = $_POST['data_nascimento'];
+                $model->CPF = $_POST['cpf'];
                 $model->save();
 
-                parent::redirect("/livro");
+                parent::redirect("/autor");
 
             } else {
     
@@ -84,35 +80,25 @@ final class LivroController extends Controller
             $model->setError($e->getMessage());
         }
 
-        /**
-         * Obtendo a lista de categorias
-         */
-        $model->rows_categorias = new Categoria()->getAllRows();
-
-        /**
-         * Obtendo a lista de autores
-         */
-        $model->rows_autores = new Autor()->getAllRows();
-
-        parent::render('Livro/form_livro.php', $model);        
+        parent::render('Autor/form_autor.php', $model);        
     } 
     
     public static function delete() : void
     {
         parent::isProtected(); 
 
-        $model = new Livro();
+        $model = new Autor();
         
         try 
         {
             $model->delete( (int) $_GET['id']);
-            parent::redirect("/livro");
+            parent::redirect("/autor");
 
         } catch(Exception $e) {
-            $model->setError("Ocorreu um erro ao excluir o livro:");
+            $model->setError("Ocorreu um erro ao excluir o autor:");
             $model->setError($e->getMessage());
         } 
         
-        parent::render('Livro/lista_livro.php', $model);  
+        parent::render('Autor/lista_autor.php', $model);  
     }
 }
